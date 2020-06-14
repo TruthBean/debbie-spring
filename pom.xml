@@ -14,7 +14,11 @@ See the Mulan PSL v2 for more details.
 
     <groupId>com.truthbean.debbie</groupId>
     <artifactId>debbie-spring</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
+
+    <name>debbie spring</name>
+    <description>debbie framework and spring framework adapter</description>
+    <url>http://www.truthbean.com/debbie-spring</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +26,7 @@ See the Mulan PSL v2 for more details.
         <java.version>11</java.version>
         <spring.version>5.2.6.RELEASE</spring.version>
         <debbie.version>0.0.2-SNAPSHOT</debbie.version>
-        <logger.version>0.0.1-SNAPSHOT</logger.version>
+        <logger.version>0.0.1-RELEASE</logger.version>
     </properties>
 
     <repositories>
@@ -40,7 +44,7 @@ See the Mulan PSL v2 for more details.
 
     <licenses>
         <license>
-            <name>MIT License</name>
+            <name>Mulan PSL v2</name>
             <url>https://github.com/TruthBean/debbie-spring/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
@@ -75,11 +79,6 @@ See the Mulan PSL v2 for more details.
             <artifactId>core</artifactId>
             <version>${logger.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.truthbean.logger</groupId>
-            <artifactId>log4j2</artifactId>
-            <version>${logger.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.truthbean.debbie</groupId>
@@ -97,6 +96,79 @@ See the Mulan PSL v2 for more details.
                 <configuration>
                     <release>11</release>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <attach>true</attach>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

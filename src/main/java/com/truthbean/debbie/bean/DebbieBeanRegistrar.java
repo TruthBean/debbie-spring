@@ -13,6 +13,9 @@ import com.truthbean.Logger;
 import com.truthbean.debbie.boot.DebbieApplicationFactory;
 import com.truthbean.logger.LoggerFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -29,6 +32,12 @@ import java.util.Set;
  */
 public class DebbieBeanRegistrar implements ImportBeanDefinitionRegistrar, BeanClassLoaderAware {
 
+    /**
+     * The bean name of the internally managed Autowired annotation processor.
+     */
+    public static final String BEAN_INJECT_ANNOTATION_PROCESSOR_BEAN_NAME =
+            "org.springframework.context.annotation.internalBeanInjectAnnotationProcessor";
+
     private ClassLoader classLoader;
 
     public DebbieBeanRegistrar() {
@@ -37,6 +46,14 @@ public class DebbieBeanRegistrar implements ImportBeanDefinitionRegistrar, BeanC
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        if (!registry.containsBeanDefinition(BEAN_INJECT_ANNOTATION_PROCESSOR_BEAN_NAME)) {
+            RootBeanDefinition definition = new RootBeanDefinition(DebbieBeanInjectAnnotationBeanPostProcessor.class);
+            definition.setSource(null);
+            definition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+            registry.registerBeanDefinition(BEAN_INJECT_ANNOTATION_PROCESSOR_BEAN_NAME, definition);
+            BeanDefinitionHolder beanDefinitionHolder = new BeanDefinitionHolder(definition, BEAN_INJECT_ANNOTATION_PROCESSOR_BEAN_NAME);
+        }
+
         Map<String, Object> annotationAttributes = importingClassMetadata.getAnnotationAttributes(EnableDebbieApplication.class.getName());
         AnnotationAttributes mapperScanAttrs = AnnotationAttributes.fromMap(annotationAttributes);
         if (mapperScanAttrs != null) {
