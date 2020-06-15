@@ -20,7 +20,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 0.0.2
  * Created on 2020-06-03 23:12
  */
-public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, FactoryBean<Bean>, InitializingBean, DisposableBean {
+public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, FactoryBean<Bean> {
 
     private BeanFactoryHandler beanFactoryHandler;
 
@@ -33,6 +33,11 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
 
     public SpringDebbieBeanFactory(Class<Bean> beanClass) {
         this.beanClass = beanClass;
+        this.logger = LoggerFactory.getLogger("com.truthbean.debbie.spring.SpringDebbieBeanFactory<" + beanClass.getName() + ">");
+    }
+
+    public SpringDebbieBeanFactory(DebbieBeanInfo<Bean> beanInfo) {
+        this.beanClass = beanInfo.getBeanClass();
         this.logger = LoggerFactory.getLogger("com.truthbean.debbie.spring.SpringDebbieBeanFactory<" + beanClass.getName() + ">");
     }
 
@@ -65,11 +70,16 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
 
     @Override
     public Bean getObject() throws Exception {
-        var beanBeanInvoker = new BeanInvoker<>(getBeanType(), beanFactoryHandler);
-        var bean = beanBeanInvoker.getBean();
-        var classInfo = beanBeanInvoker.getBeanInfo();
-        beanFactoryHandler.resolveDependentBean(bean, classInfo);
-        return bean;
+        Bean bean = beanFactoryHandler.factory(null, getBeanType(), false, false);
+        if (bean != null) {
+            return bean;
+        } else {
+            var beanBeanInvoker = beanFactoryHandler.factoryBeanInvoker(getBeanType());
+            bean = beanBeanInvoker.getBean();
+            var classInfo = beanBeanInvoker.getBeanInfo();
+            beanFactoryHandler.resolveDependentBean(bean, classInfo);
+            return bean;
+        }
     }
 
     @Override
@@ -89,10 +99,5 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
     @Override
     public void destroy() {
         // destory
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // init
     }
 }

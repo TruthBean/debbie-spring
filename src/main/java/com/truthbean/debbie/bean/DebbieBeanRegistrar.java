@@ -62,15 +62,18 @@ public class DebbieBeanRegistrar implements ImportBeanDefinitionRegistrar, BeanC
             String[] excludePackages = (String[]) mapperScanAttrs.get("excludePackages");
             Class<?>[] excludeClasses = (Class<?>[]) mapperScanAttrs.get("excludeClasses");
 
-            DebbieApplicationFactory factory = DebbieApplicationFactory.configure(classLoader, configuration -> {
+            DebbieApplicationFactory applicationFactory = DebbieApplicationFactory.configure(classLoader, configuration -> {
                 configuration.addScanBasePackages(basePackages);
                 configuration.addScanClasses(classes);
                 configuration.addScanExcludeClasses(excludeClasses);
                 configuration.addScanExcludePackages(excludePackages);
             });
-            Set<DebbieBeanInfo<?>> allDebbieBeanInfo = factory.getAllDebbieBeanInfo();
+            Set<DebbieBeanInfo<?>> allDebbieBeanInfo = applicationFactory.getAllDebbieBeanInfo();
             for (DebbieBeanInfo<?> beanInfo : allDebbieBeanInfo) {
-                registry.registerBeanDefinition(beanInfo.getServiceName(), new RootBeanDefinition(beanInfo.getBeanClass(), () -> factory.factory(beanInfo)));
+                Class<Object> beanClass = beanInfo.getBeanClass();
+                SpringDebbieBeanFactory<?> factory = new SpringDebbieBeanFactory<>(beanInfo);
+                factory.setBeanFactoryHandler(applicationFactory);
+                registry.registerBeanDefinition(beanInfo.getServiceName(), new RootBeanDefinition(beanClass, () -> factory));
             }
         }
     }
