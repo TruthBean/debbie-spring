@@ -14,7 +14,7 @@ See the Mulan PSL v2 for more details.
 
     <groupId>com.truthbean.debbie</groupId>
     <artifactId>debbie-spring</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2-RELEASE</version>
 
     <name>debbie spring</name>
     <description>debbie framework and spring framework adapter</description>
@@ -25,7 +25,7 @@ See the Mulan PSL v2 for more details.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <spring.version>5.2.6.RELEASE</spring.version>
-        <debbie.version>0.0.2-SNAPSHOT</debbie.version>
+        <debbie.version>0.0.2-RELEASE</debbie.version>
         <logger.version>0.0.1-RELEASE</logger.version>
     </properties>
 
@@ -42,10 +42,21 @@ See the Mulan PSL v2 for more details.
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <licenses>
         <license>
             <name>Mulan PSL v2</name>
-            <url>https://github.com/TruthBean/debbie-spring/blob/master/LICENSE</url>
+            <url>https://github.com/truthbean/debbie-spring/blob/master/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -86,6 +97,30 @@ See the Mulan PSL v2 for more details.
             <version>${debbie.version}</version>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

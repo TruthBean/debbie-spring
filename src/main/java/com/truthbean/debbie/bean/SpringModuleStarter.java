@@ -24,7 +24,7 @@ public class SpringModuleStarter implements DebbieModuleStarter {
 
     private volatile ConfigurableApplicationContext applicationContext;
 
-    @SuppressWarnings("Unchecked")
+    @SuppressWarnings("unchecked")
     @Override
     public void starter(DebbieConfigurationFactory configurationFactory, BeanFactoryHandler beanFactoryHandler) {
         BeanInitialization beanInitialization = beanFactoryHandler.getBeanInitialization();
