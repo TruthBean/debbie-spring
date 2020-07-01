@@ -11,9 +11,7 @@ package com.truthbean.debbie.bean;
 
 import com.truthbean.Logger;
 import com.truthbean.logger.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author TruthBean/Rogar·Q
@@ -22,28 +20,34 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, FactoryBean<Bean> {
 
-    private BeanFactoryHandler beanFactoryHandler;
+    private GlobalBeanFactory globalBeanFactory;
 
     private final Class<Bean> beanClass;
+    private final String name;
 
     private boolean singleton = false;
     private org.springframework.beans.factory.BeanFactory springBeanFactory;
 
     private final Logger logger;
+    private final DebbieBeanInfoFactory debbieBeanInfoFactory;
 
-    public SpringDebbieBeanFactory(Class<Bean> beanClass) {
+    public SpringDebbieBeanFactory(DebbieBeanInfoFactory debbieBeanInfoFactory, Class<Bean> beanClass, String name) {
+        this.debbieBeanInfoFactory = debbieBeanInfoFactory;
         this.beanClass = beanClass;
+        this.name = name;
         this.logger = LoggerFactory.getLogger("com.truthbean.debbie.spring.SpringDebbieBeanFactory<" + beanClass.getName() + ">");
     }
 
-    public SpringDebbieBeanFactory(DebbieBeanInfo<Bean> beanInfo) {
+    public SpringDebbieBeanFactory(DebbieBeanInfoFactory debbieBeanInfoFactory, DebbieBeanInfo<Bean> beanInfo) {
+        this.debbieBeanInfoFactory = debbieBeanInfoFactory;
         this.beanClass = beanInfo.getBeanClass();
+        this.name = beanInfo.getServiceName();
         this.logger = LoggerFactory.getLogger("com.truthbean.debbie.spring.SpringDebbieBeanFactory<" + beanClass.getName() + ">");
     }
 
     @Override
-    public void setBeanFactoryHandler(BeanFactoryHandler beanFactoryHandler) {
-        this.beanFactoryHandler = beanFactoryHandler;
+    public void setGlobalBeanFactory(GlobalBeanFactory globalBeanFactory) {
+        this.globalBeanFactory = globalBeanFactory;
     }
 
     @Override
@@ -70,16 +74,11 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
 
     @Override
     public Bean getObject() throws Exception {
-        Bean bean = beanFactoryHandler.factory(null, getBeanType(), false, false);
-        if (bean != null) {
-            return bean;
-        } else {
-            var beanBeanInvoker = beanFactoryHandler.factoryBeanInvoker(getBeanType());
-            bean = beanBeanInvoker.getBean();
-            var classInfo = beanBeanInvoker.getBeanInfo();
-            beanFactoryHandler.resolveDependentBean(bean, classInfo);
-            return bean;
+        DebbieBeanInfo<Bean> beanInfo = debbieBeanInfoFactory.getBeanInfo(name, getBeanType(), false, false);
+        if (beanInfo != null) {
+            return globalBeanFactory.factoryBeanByDependenceProcessor(beanInfo);
         }
+        return null;
     }
 
     @Override

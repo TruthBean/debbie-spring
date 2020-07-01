@@ -24,46 +24,47 @@ public class SpringModuleStarter implements DebbieModuleStarter {
 
     private volatile ConfigurableApplicationContext applicationContext;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void starter(DebbieConfigurationFactory configurationFactory, BeanFactoryHandler beanFactoryHandler) {
-        BeanInitialization beanInitialization = beanFactoryHandler.getBeanInitialization();
+    public void starter(DebbieConfigurationFactory configurationFactory, DebbieApplicationContext applicationContext) {
+        BeanInitialization beanInitialization = applicationContext.getBeanInitialization();
 
-        BeanScanConfiguration configuration = configurationFactory.factory(BeanScanConfiguration.class, beanFactoryHandler);
+        BeanScanConfiguration configuration = configurationFactory.factory(BeanScanConfiguration.class, applicationContext);
         String scanBasePackage = configuration.getScanBasePackage();
 
         if (scanBasePackage != null) {
-            applicationContext = new AnnotationConfigApplicationContext(scanBasePackage);
+            this.applicationContext = new AnnotationConfigApplicationContext(scanBasePackage);
         } else {
-            applicationContext = new AnnotationConfigApplicationContext();
+            this.applicationContext = new AnnotationConfigApplicationContext();
         }
-        String[] names = applicationContext.getBeanDefinitionNames();
+        String[] names = this.applicationContext.getBeanDefinitionNames();
         for (String name : names) {
-            Object bean = applicationContext.getBean(name);
+            Object bean = this.applicationContext.getBean(name);
             Class<?> beanClass = bean.getClass();
             DebbieBeanInfo beanInfo = new DebbieBeanInfo<>(beanClass);
             beanInfo.setBean(bean);
-            beanInfo.setBeanName(name);
-            if (applicationContext.isSingleton(name)) {
+            beanInfo.addBeanName(name);
+            if (this.applicationContext.isSingleton(name)) {
                 beanInfo.setBeanType(BeanType.SINGLETON);
             } else {
                 beanInfo.setBeanType(BeanType.NO_LIMIT);
-                AutowireCapableBeanFactory autowireCapableBeanFactory = applicationContext.getAutowireCapableBeanFactory();
-                SpringDebbieBeanFactory beanFactory = new SpringDebbieBeanFactory<>(beanClass);
+                AutowireCapableBeanFactory autowireCapableBeanFactory = this.applicationContext.getAutowireCapableBeanFactory();
+                SpringDebbieBeanFactory beanFactory =
+                        new SpringDebbieBeanFactory<>(applicationContext.getDebbieBeanInfoFactory(), beanClass, name);
                 beanFactory.setSpringBeanFactory(autowireCapableBeanFactory);
                 beanFactory.setSingleton(false);
                 beanInfo.setBeanFactory(beanFactory);
             }
 
-            if (!beanFactoryHandler.containsBean(name)) {
+            if (!applicationContext.getGlobalBeanFactory().containsBean(name)) {
                 beanInitialization.initBean(beanInfo);
             }
         }
-        beanFactoryHandler.refreshBeans();
+        applicationContext.refreshBeans();
     }
 
     @Override
-    public void release(DebbieConfigurationFactory configurationFactory, BeanFactoryHandler beanFactoryHandler) {
+    public void release(DebbieConfigurationFactory configurationFactory, DebbieApplicationContext debbieApplicationContext) {
         if (applicationContext != null)
             applicationContext.close();
     }

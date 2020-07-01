@@ -13,7 +13,6 @@ import com.truthbean.Logger;
 import com.truthbean.debbie.boot.DebbieApplicationFactory;
 import com.truthbean.logger.LoggerFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -68,11 +67,12 @@ public class DebbieBeanRegistrar implements ImportBeanDefinitionRegistrar, BeanC
                 configuration.addScanExcludeClasses(excludeClasses);
                 configuration.addScanExcludePackages(excludePackages);
             });
-            Set<DebbieBeanInfo<?>> allDebbieBeanInfo = applicationFactory.getAllDebbieBeanInfo();
+            DebbieBeanInfoFactory debbieBeanInfoFactory = applicationFactory.getDebbieBeanInfoFactory();
+            Set<DebbieBeanInfo<?>> allDebbieBeanInfo = debbieBeanInfoFactory.getAllDebbieBeanInfo();
             for (DebbieBeanInfo<?> beanInfo : allDebbieBeanInfo) {
                 Class<Object> beanClass = beanInfo.getBeanClass();
-                SpringDebbieBeanFactory<?> factory = new SpringDebbieBeanFactory<>(beanInfo);
-                factory.setBeanFactoryHandler(applicationFactory);
+                SpringDebbieBeanFactory<?> factory = new SpringDebbieBeanFactory<>(debbieBeanInfoFactory, beanInfo);
+                factory.setGlobalBeanFactory(applicationFactory.getGlobalBeanFactory());
                 registry.registerBeanDefinition(beanInfo.getServiceName(), new RootBeanDefinition(beanClass, () -> factory));
             }
         }
