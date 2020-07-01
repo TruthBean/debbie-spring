@@ -10,6 +10,7 @@
 package com.truthbean.debbie.bean;
 
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.core.Ordered;
 
@@ -26,6 +27,7 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
 
     private int order = Ordered.LOWEST_PRECEDENCE - 3;
 
+    @SuppressWarnings("unchecked")
     public DebbieBeanInjectAnnotationBeanPostProcessor() {
         super();
         Set<Class<? extends Annotation>> autowiredAnnotationTypes = new HashSet<>();
@@ -33,6 +35,24 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
         logger.trace("Debbie @BeanInject supported for autowiring");
         // autowiredAnnotationTypes.add(PropertyInject.class);
         // logger.trace("Debbie @PropertyInject supported for autowiring");
+        try {
+            Class<?> inject = Class.forName("javax.inject.Inject");
+            if (Annotation.class.isAssignableFrom(inject)) {
+                autowiredAnnotationTypes.add((Class<? extends Annotation>) inject);
+            }
+            logger.trace("Debbie @Inject supported for autowiring");
+        } catch (ClassNotFoundException ignored) {
+        }
+        try {
+            Class<?> resource = Class.forName("javax.annotation.Resource");
+            if (Annotation.class.isAssignableFrom(resource)) {
+                autowiredAnnotationTypes.add((Class<? extends Annotation>) resource);
+            }
+            logger.trace("Debbie @Resource supported for autowiring");
+        } catch (ClassNotFoundException ignored) {
+        }
+        autowiredAnnotationTypes.add(Autowired.class);
+        logger.trace("Debbie @Autowired supported for autowiring");
         setAutowiredAnnotationTypes(autowiredAnnotationTypes);
     }
 
