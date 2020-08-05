@@ -7,10 +7,15 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package com.truthbean.debbie.bean;
+package com.truthbean.debbie.spring;
 
+import com.truthbean.debbie.bean.BeanInitialization;
+import com.truthbean.debbie.bean.BeanScanConfiguration;
+import com.truthbean.debbie.bean.BeanType;
+import com.truthbean.debbie.bean.DebbieBeanInfo;
 import com.truthbean.debbie.boot.DebbieModuleStarter;
-import com.truthbean.debbie.properties.DebbieConfigurationFactory;
+import com.truthbean.debbie.core.ApplicationContext;
+import com.truthbean.debbie.properties.DebbieConfigurationCenter;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -26,7 +31,7 @@ public class SpringModuleStarter implements DebbieModuleStarter {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void starter(DebbieConfigurationFactory configurationFactory, DebbieApplicationContext applicationContext) {
+    public void starter(DebbieConfigurationCenter configurationFactory, ApplicationContext applicationContext) {
         BeanInitialization beanInitialization = applicationContext.getBeanInitialization();
 
         BeanScanConfiguration configuration = configurationFactory.factory(BeanScanConfiguration.class, applicationContext);
@@ -50,7 +55,7 @@ public class SpringModuleStarter implements DebbieModuleStarter {
                 beanInfo.setBeanType(BeanType.NO_LIMIT);
                 AutowireCapableBeanFactory autowireCapableBeanFactory = this.applicationContext.getAutowireCapableBeanFactory();
                 SpringDebbieBeanFactory beanFactory =
-                        new SpringDebbieBeanFactory<>(applicationContext.getDebbieBeanInfoFactory(), beanClass, name);
+                        new SpringDebbieBeanFactory<>(applicationContext.getBeanInfoFactory(), beanClass, name);
                 beanFactory.setSpringBeanFactory(autowireCapableBeanFactory);
                 beanFactory.setSingleton(false);
                 beanInfo.setBeanFactory(beanFactory);
@@ -64,7 +69,7 @@ public class SpringModuleStarter implements DebbieModuleStarter {
     }
 
     @Override
-    public void release(DebbieConfigurationFactory configurationFactory, DebbieApplicationContext debbieApplicationContext) {
+    public void release(DebbieConfigurationCenter configurationFactory, ApplicationContext debbieApplicationContext) {
         if (applicationContext != null)
             applicationContext.close();
     }

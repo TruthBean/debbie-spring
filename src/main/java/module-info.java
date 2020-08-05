@@ -7,22 +7,17 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package com.truthbean.debbie.bean;
-
-import org.springframework.cache.annotation.CachingConfigurationSelector;
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.*;
-
 /**
  * @author TruthBean/Rogar·Q
- * @since 0.0.2
- * Created on 2020-06-04 23:41
+ * @since 0.1.0
+ * Created on 2020-08-05 11:34
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import(DebbieBeanRegistrar.class)
-public @interface EnableDebbieApplication {
-    DebbieScan scan() default @DebbieScan;
+module com.truthbean.debbie.spring {
+    exports com.truthbean.debbie.spring;
+    requires transitive com.truthbean.debbie.core;
+    requires spring.beans;
+    requires spring.core;
+    requires spring.context;
+
+    provides com.truthbean.debbie.boot.DebbieModuleStarter with com.truthbean.debbie.spring.SpringModuleStarter;
 }

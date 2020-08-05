@@ -7,8 +7,11 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package com.truthbean.debbie.bean;
+package com.truthbean.debbie.spring;
 
+import com.truthbean.Logger;
+import com.truthbean.debbie.bean.BeanInject;
+import com.truthbean.logger.LoggerFactory;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
@@ -32,7 +35,7 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
         super();
         Set<Class<? extends Annotation>> autowiredAnnotationTypes = new HashSet<>();
         autowiredAnnotationTypes.add(BeanInject.class);
-        logger.trace("Debbie @BeanInject supported for autowiring");
+        LOGGER.trace(() -> "Debbie @BeanInject supported for autowiring");
         // autowiredAnnotationTypes.add(PropertyInject.class);
         // logger.trace("Debbie @PropertyInject supported for autowiring");
         try {
@@ -40,7 +43,7 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
             if (Annotation.class.isAssignableFrom(inject)) {
                 autowiredAnnotationTypes.add((Class<? extends Annotation>) inject);
             }
-            logger.trace("Debbie @Inject supported for autowiring");
+            LOGGER.trace(() -> "Debbie @Inject supported for autowiring");
         } catch (ClassNotFoundException ignored) {
         }
         try {
@@ -48,11 +51,11 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
             if (Annotation.class.isAssignableFrom(resource)) {
                 autowiredAnnotationTypes.add((Class<? extends Annotation>) resource);
             }
-            logger.trace("Debbie @Resource supported for autowiring");
+            LOGGER.trace(() -> "Debbie @Resource supported for autowiring");
         } catch (ClassNotFoundException ignored) {
         }
         autowiredAnnotationTypes.add(Autowired.class);
-        logger.trace("Debbie @Autowired supported for autowiring");
+        LOGGER.trace(() -> "Debbie @Autowired supported for autowiring");
         setAutowiredAnnotationTypes(autowiredAnnotationTypes);
     }
 
@@ -79,4 +82,6 @@ public class DebbieBeanInjectAnnotationBeanPostProcessor extends AutowiredAnnota
     public int getOrder() {
         return order;
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DebbieBeanInjectAnnotationBeanPostProcessor.class);
 }

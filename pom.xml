@@ -25,8 +25,7 @@ See the Mulan PSL v2 for more details.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <spring.version>5.2.6.RELEASE</spring.version>
-        <debbie.version>0.1.0-SNAPSHOT</debbie.version>
-        <logger.version>0.1.0-SNAPSHOT</logger.version>
+        <logger.version>0.1.0-RELEASE</logger.version>
     </properties>
 
     <repositories>
@@ -87,14 +86,15 @@ See the Mulan PSL v2 for more details.
 
         <dependency>
             <groupId>com.truthbean.logger</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>logger-core</artifactId>
             <version>${logger.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.truthbean.debbie</groupId>
             <artifactId>debbie-core</artifactId>
-            <version>${debbie.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -168,7 +168,7 @@ See the Mulan PSL v2 for more details.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.9.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

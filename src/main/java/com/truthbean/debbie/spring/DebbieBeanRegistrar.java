@@ -7,10 +7,13 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package com.truthbean.debbie.bean;
+package com.truthbean.debbie.spring;
 
 import com.truthbean.Logger;
-import com.truthbean.debbie.boot.DebbieApplicationFactory;
+import com.truthbean.debbie.bean.BeanInfoFactory;
+import com.truthbean.debbie.bean.DebbieBeanInfo;
+import com.truthbean.debbie.core.ApplicationContext;
+import com.truthbean.debbie.core.ApplicationFactory;
 import com.truthbean.logger.LoggerFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -61,18 +64,19 @@ public class DebbieBeanRegistrar implements ImportBeanDefinitionRegistrar, BeanC
             String[] excludePackages = (String[]) mapperScanAttrs.get("excludePackages");
             Class<?>[] excludeClasses = (Class<?>[]) mapperScanAttrs.get("excludeClasses");
 
-            DebbieApplicationFactory applicationFactory = DebbieApplicationFactory.configure(classLoader, configuration -> {
+            ApplicationFactory applicationFactory = ApplicationFactory.configure(classLoader, configuration -> {
                 configuration.addScanBasePackages(basePackages);
                 configuration.addScanClasses(classes);
                 configuration.addScanExcludeClasses(excludeClasses);
                 configuration.addScanExcludePackages(excludePackages);
             });
-            DebbieBeanInfoFactory debbieBeanInfoFactory = applicationFactory.getDebbieBeanInfoFactory();
+            ApplicationContext applicationContext = applicationFactory.getApplicationContext();
+            BeanInfoFactory debbieBeanInfoFactory = applicationContext.getBeanInfoFactory();
             Set<DebbieBeanInfo<?>> allDebbieBeanInfo = debbieBeanInfoFactory.getAllDebbieBeanInfo();
             for (DebbieBeanInfo<?> beanInfo : allDebbieBeanInfo) {
                 Class<Object> beanClass = beanInfo.getBeanClass();
                 SpringDebbieBeanFactory<?> factory = new SpringDebbieBeanFactory<>(debbieBeanInfoFactory, beanInfo);
-                factory.setGlobalBeanFactory(applicationFactory.getGlobalBeanFactory());
+                factory.setGlobalBeanFactory(applicationContext.getGlobalBeanFactory());
                 registry.registerBeanDefinition(beanInfo.getServiceName(), new RootBeanDefinition(beanClass, () -> factory));
             }
         }

@@ -7,9 +7,10 @@
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package com.truthbean.debbie.bean;
+package com.truthbean.debbie.spring;
 
 import com.truthbean.Logger;
+import com.truthbean.debbie.bean.*;
 import com.truthbean.logger.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -29,16 +30,16 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
     private org.springframework.beans.factory.BeanFactory springBeanFactory;
 
     private final Logger logger;
-    private final DebbieBeanInfoFactory debbieBeanInfoFactory;
+    private final BeanInfoFactory debbieBeanInfoFactory;
 
-    public SpringDebbieBeanFactory(DebbieBeanInfoFactory debbieBeanInfoFactory, Class<Bean> beanClass, String name) {
+    public SpringDebbieBeanFactory(BeanInfoFactory debbieBeanInfoFactory, Class<Bean> beanClass, String name) {
         this.debbieBeanInfoFactory = debbieBeanInfoFactory;
         this.beanClass = beanClass;
         this.name = name;
         this.logger = LoggerFactory.getLogger("com.truthbean.debbie.spring.SpringDebbieBeanFactory<" + beanClass.getName() + ">");
     }
 
-    public SpringDebbieBeanFactory(DebbieBeanInfoFactory debbieBeanInfoFactory, DebbieBeanInfo<Bean> beanInfo) {
+    public SpringDebbieBeanFactory(BeanInfoFactory debbieBeanInfoFactory, DebbieBeanInfo<Bean> beanInfo) {
         this.debbieBeanInfoFactory = debbieBeanInfoFactory;
         this.beanClass = beanInfo.getBeanClass();
         this.name = beanInfo.getServiceName();
@@ -76,7 +77,7 @@ public class SpringDebbieBeanFactory<Bean> implements BeanFactory<Bean>, Factory
     public Bean getObject() throws Exception {
         DebbieBeanInfo<Bean> beanInfo = debbieBeanInfoFactory.getBeanInfo(name, getBeanType(), false, false);
         if (beanInfo != null) {
-            return globalBeanFactory.factoryBeanByDependenceProcessor(beanInfo);
+            return globalBeanFactory.factoryBeanByDependenceProcessor(beanInfo, true);
         }
         return null;
     }
