@@ -14,7 +14,7 @@ See the Mulan PSL v2 for more details.
 
     <groupId>com.truthbean.debbie</groupId>
     <artifactId>debbie-spring</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0-RELEASE</version>
 
     <name>debbie spring</name>
     <description>debbie framework and spring framework adapter</description>
@@ -24,8 +24,7 @@ See the Mulan PSL v2 for more details.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <spring.version>5.2.6.RELEASE</spring.version>
-        <logger.version>0.1.0-RELEASE</logger.version>
+        <spring.version>5.2.9.RELEASE</spring.version>
     </properties>
 
     <repositories>
@@ -82,13 +81,6 @@ See the Mulan PSL v2 for more details.
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.truthbean.logger</groupId>
-            <artifactId>logger-core</artifactId>
-            <version>${logger.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
