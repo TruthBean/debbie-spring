@@ -14,7 +14,7 @@ See the Mulan PSL v2 for more details.
 
     <groupId>com.truthbean.debbie</groupId>
     <artifactId>debbie-spring</artifactId>
-    <version>0.1.0-RELEASE</version>
+    <version>0.1.1-RELEASE</version>
 
     <name>debbie spring</name>
     <description>debbie framework and spring framework adapter</description>
